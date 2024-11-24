@@ -1,0 +1,16 @@
+.container__editor {
+    counter-reset: line 0; /* Initialize the line counter */
+    /* padding-left:3em !important; */
+    overflow: unset !important;
+}
+
+.container_editor_line_number:before {
+    position: absolute;
+    right: 100%;
+    margin-right: 10px;
+    text-align: right;
+    opacity: .3;
+    user-select: none;
+    counter-increment: line;
+    content: counter(line);
+}

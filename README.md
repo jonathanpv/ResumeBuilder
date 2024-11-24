@@ -1,4 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ResumeBuilder
+
+
+This is a resume builder using wasm based latex engine, works locally, however if you import packages it will require an internet connection.
+
+## Demo
+We can render full PDFs using a latex backed engine
+| <img src="./demo/demo.png" width="1280"> |
+| - |
+
+
+## Adding experience
+Most of the UI is Dialog based, adding all the information needed to build the resume as you go
+| <img src="./demo/adding-experience.png" width="1280"> |
+| - |
+
+## Adding skills
+Adding skills is a matter of toggling the buttons in the UI
+| <img src="./demo/adding-skills.png" width="1280"> |
+| - |
+
+## Latex editor
+This is a preview of the advanced usage, you can play around and write your own latex and compile it here, the actual app is based off of replacing strings with a template resume.
+| <img src="./demo/latex-editor.png" width="1280"> |
+| - |
+
+
+Helpful info on swift latex:
+- [The read me here](https://github.com/gboyd068/obsidian-swiftlatex-render)
+- [swift latex docs here](https://swiftlatex.com)
 
 ## Getting Started
 
