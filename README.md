@@ -26,8 +26,8 @@ This is a preview of the advanced usage, you can play around and write your own 
 
 
 Helpful info on swift latex:
-- [The read me here](https://github.com/gboyd068/obsidian-swiftlatex-render)
-- [swift latex docs here](https://swiftlatex.com)
+- [The read me in this separate repo covers some info on swiftlatex and the server serving texlive files](https://github.com/gboyd068/obsidian-swiftlatex-render)
+- [swift latex docs here](https://www.swiftlatex.com/)
 
 ## Getting Started
 
