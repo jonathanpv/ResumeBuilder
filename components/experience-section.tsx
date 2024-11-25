@@ -152,9 +152,9 @@ const ExperienceSection = ({
                             
                             <p className="text-gray-700">{experience.companyName}</p>
                             <ul className="list-disc pl-5">
-                                <li>{experience.bulletPoint1}</li>
-                                <li>{experience.bulletPoint2}</li>
-                                <li>{experience.bulletPoint3}</li>
+                                {experience.bulletPoint1 && <li>{experience.bulletPoint1}</li>}
+                                {experience.bulletPoint2 && <li>{experience.bulletPoint2}</li>}
+                                {experience.bulletPoint3 && <li>{experience.bulletPoint3}</li>}
                             </ul>
                             <div className="mt-4 flex justify-start space-x-2">
                                 <ExperienceDialog

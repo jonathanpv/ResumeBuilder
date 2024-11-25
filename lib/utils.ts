@@ -48,9 +48,10 @@ export const tempResume = {
   "projectExperience": [
     {
       "title": "Software Engineer",
-      "dates": "Aug 2023 - Present",
+      "dates": "Aug 2023 - Aug 2024",
       "companyName": "Pluto Learning",
       "bulletPoint1": "Founding Engineer",
+      "bulletPoint2": "Built MVP for Pluto Learning chat based AI tutors using **OpenAI** and **Next.js**, earned $10k in university pitching competition",
       "id": 1708870599107
     }
   ],
