@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { SkillsSection } from "@/components/skills-section"
 import ExperienceSection from '@/components/experience-section'
 import EducationSection from './education-section';
+import { ScrollArea } from './ui/scroll-area';
 
 export function ResumeBuilder({resume, setResume, resumeFeedback}) {
   // This is the personalInfo stateful variable
@@ -126,7 +127,8 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
 //   };
  
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-y-scroll">
+    <ScrollArea>
+    <div className="flex flex-col md:flex-row h-screen">
       <main className="lg:flex-1 lg:p-4">
 
         <Card>
@@ -221,5 +223,6 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
         </Card>
       </aside> */}
     </div>
+    </ScrollArea>
   )
 }
