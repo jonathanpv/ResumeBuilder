@@ -1,4 +1,3 @@
-//@ts-nocheck
 let preamble = 
 `
 %-------------------------
@@ -133,12 +132,12 @@ let resumeJSON = {
   },
   "jobExperience": [
     {
-      "title": "f",
-      "dates": "may 2021 -- may 3033",
-      "companyName": "f",
-      "bulletPoint1": "f",
-      "bulletPoint2": "f",
-      "bulletPoint3": "f",
+      "title": "",
+      "dates": "",
+      "companyName": "",
+      "bulletPoint1": "",
+      "bulletPoint2": "",
+      "bulletPoint3": "",
       "id": 1708289585992
     }
   ],
@@ -150,65 +149,138 @@ let resumeJSON = {
   }
 }
 
-// function that hahndles the json events
+// Function to sanitize strings for LaTeX
+function sanitizeLatexString(str: string): string {
+  if (!str) return '';
 
-function createLatexStringHeader(personalInfo) {
+  // Escape LaTeX special characters
+  const specialChars: { [key: string]: string } = {
+    '\\': '\\textbackslash{}',
+    '{': '\\{',
+    '}': '\\}',
+    '#': '\\#',
+    '$': '\\$',
+    '%': '\\%',
+    '&': '\\&',
+    '_': '\\_',
+    '~': '\\textasciitilde{}',
+    '^': '\\textasciicircum{}',
+    '<': '\\textless{}',
+    '>': '\\textgreater{}',
+    '|': '\\textbar{}',
+    '`': '\\textasciigrave{}'
+  };
 
-  if (personalInfo.name.length == 0 || personalInfo.email.length == 0 || personalInfo.github.length == 0 || personalInfo.linkedin.length == 0) {
+  let escapedStr = str.replace(/([\\{}#$%&_^~<>|`])/g, match => specialChars[match] || match);
+
+  // Replace markdown bold and italics with LaTeX equivalents
+  // Bold: **text** or __text__
+  escapedStr = escapedStr.replace(/(\*\*|__)(.*?)\1/g, '\\textbf{$2}');
+
+  // Italic: *text* or _text_
+  escapedStr = escapedStr.replace(/(\*|_)(.*?)\1/g, '\\textit{$2}');
+
+  return escapedStr;
+}
+
+// Function that handles the JSON events
+
+function createLatexStringHeader(personalInfo: any) {
+
+  const { name, email, github, linkedin } = personalInfo;
+
+  if (name.length === 0 || email.length === 0) {
     return ``;
   }
 
-  return `
+  let header = `
   \\begin{center}
-  \\textbf{\\huge \\scshape ${personalInfo.name}} \\\\
-  \\small \\href{mailto:${personalInfo.email}}{\\underline{${personalInfo.email}}} $|$ 
-  \\href{https://${personalInfo.github}}{\\underline{${personalInfo.github}}} $|$ 
-  \\href{https://${personalInfo.linkedin}}{\\underline{${personalInfo.linkedin}}}
-\\end{center}
+  \\textbf{\\huge \\scshape ${sanitizeLatexString(name)}} \\\\
+  \\small \\href{mailto:${sanitizeLatexString(email)}}{\\underline{${sanitizeLatexString(email)}}}`;
+  
+  if (github && github.length > 0) {
+    header += ` $|$ \\href{https://${sanitizeLatexString(github)}}{\\underline{${sanitizeLatexString(github)}}}`;
+  }
 
+  if (linkedin && linkedin.length > 0) {
+    header += ` $|$ \\href{https://${sanitizeLatexString(linkedin)}}{\\underline{${sanitizeLatexString(linkedin)}}}`;
+  }
+
+  header += `
+  \\end{center}
   `;
+
+  return header;
 }
 
 
-function createLatexStringSkillsSection(skills) {
-  if (skills.toolsAndFrameworks.length == 0 || skills.programmingLanguages.length == 0) {
+function createLatexStringSkillsSection(skills: any) {
+  const { toolsAndFrameworks, programmingLanguages } = skills;
+
+  if ((toolsAndFrameworks.length === 0 || toolsAndFrameworks.every((item: string) => item.trim().length === 0)) &&
+      (programmingLanguages.length === 0 || programmingLanguages.every((item: string) => item.trim().length === 0))) {
     return ``;
   }
+
   // Helper to escape the # keyword since # in latex is a special key. And users may sometimes include C# as a skill.
-  const escapeLatexCharacters = (str) => str.replace(/#/g, '\\#');
+  const escapeLatexCharacters = (str: string) => sanitizeLatexString(str);
 
   // Map over tools and frameworks and programming languages to escape characters
-  const toolsFrameworks = skills.toolsAndFrameworks.map(escapeLatexCharacters).join(', ');
-  const programmingLanguages = skills.programmingLanguages.map(escapeLatexCharacters).join(', ');
+  const toolsFrameworks = toolsAndFrameworks.map(escapeLatexCharacters).filter((item: string) => item.length > 0).join(', ');
+  const programmingLanguagesStr = programmingLanguages.map(escapeLatexCharacters).filter((item: string) => item.length > 0).join(', ');
 
-
-  return `
+  let skillsSection = `
   \\section{Skills}
 \\begin{itemize}
-  \\item \\textbf{Code:} ${programmingLanguages}
-  \\item \\textbf{Tools:} ${toolsFrameworks}
-\\end{itemize}
+`;
+
+  if (programmingLanguagesStr.length > 0) {
+    skillsSection += `  \\item \\textbf{Code:} ${programmingLanguagesStr}\n`;
+  }
+
+  if (toolsFrameworks.length > 0) {
+    skillsSection += `  \\item \\textbf{Tools:} ${toolsFrameworks}\n`;
+  }
+
+  skillsSection += `\\end{itemize}
   `;
+
+  return skillsSection;
 }
 
-function createLatexStringExperienceSection(sectionTitle, jobExperience) {
-  if (jobExperience.length == 0) {
+function createLatexStringExperienceSection(sectionTitle: string, experiences: any[]) {
+  // Filter out empty experiences
+  const validExperiences = experiences.filter(exp => exp.companyName && exp.companyName.trim().length > 0 && exp.title && exp.title.trim().length > 0);
+
+  if (validExperiences.length === 0) {
     return ``;
   }
 
-  let experienceSection = `\\section{${sectionTitle}}
+  let experienceSection = `\\section{${sanitizeLatexString(sectionTitle)}}
 \\resumeSubHeadingListStart
 `;
 
-  jobExperience.forEach((job) => {
+  validExperiences.forEach((job) => {
     experienceSection += `  \\resumeSubheading
-    {${job.companyName}}{${job.dates}}
-    {${job.title}}{}
+    {${sanitizeLatexString(job.companyName)}}{${sanitizeLatexString(job.dates)}}
+    {${sanitizeLatexString(job.title)}}{}
     \\resumeItemListStart
-      \\resumeItem{${job.bulletPoint1}}
-      \\resumeItem{${job.bulletPoint2}}
-      \\resumeItem{${job.bulletPoint3}}
-    \\resumeItemListEnd
+`;
+
+    if (job.bulletPoint1 && job.bulletPoint1.trim().length > 0) {
+      experienceSection += `      \\resumeItem{${sanitizeLatexString(job.bulletPoint1)}}
+`;
+    }
+    if (job.bulletPoint2 && job.bulletPoint2.trim().length > 0) {
+      experienceSection += `      \\resumeItem{${sanitizeLatexString(job.bulletPoint2)}}
+`;
+    }
+    if (job.bulletPoint3 && job.bulletPoint3.trim().length > 0) {
+      experienceSection += `      \\resumeItem{${sanitizeLatexString(job.bulletPoint3)}}
+`;
+    }
+
+    experienceSection += `    \\resumeItemListEnd
 `;
   });
 
@@ -218,30 +290,31 @@ function createLatexStringExperienceSection(sectionTitle, jobExperience) {
 }
 
 
-function createLatexStringEducationSection(sectionTitle, education) {
-  if (education.institutionName.length == 0 || education.degreeDetails.length == 0 || education.timePeriod.length == 0) {
+function createLatexStringEducationSection(sectionTitle: string, education: any) {
+  const { institutionName, degreeDetails, timePeriod } = education;
+
+  if (institutionName.length === 0 || degreeDetails.length === 0 || timePeriod.length === 0) {
     return ``;
   }
 
-  let educationSection = `\\section{${sectionTitle}}
+  let educationSection = `\\section{${sanitizeLatexString(sectionTitle)}}
 \\resumeSubHeadingListStart
 `;
 
-  
-    educationSection += `  \\resumeSubheading
-    {${education.institutionName}}{${education.timePeriod}}
-    {${education.degreeDetails}}{}
+  educationSection += `  \\resumeSubheading
+    {${sanitizeLatexString(institutionName)}}{${sanitizeLatexString(timePeriod)}}
+    {${sanitizeLatexString(degreeDetails)}}{}
 `;
 
-educationSection += `\\resumeSubHeadingListEnd`;
+  educationSection += `\\resumeSubHeadingListEnd`;
 
   return educationSection;
 }
 
 
-// given teh above example generate a function taht takes in teh experience key and outputs a latex string like the one above
+// Given the above example, generate a function that takes in the experience key and outputs a LaTeX string like the one above
 
-export const jsonToLatexString = (resumeJSON) => {
+export const jsonToLatexString = (resumeJSON: any) => {
   
   return [
     preamble, 
