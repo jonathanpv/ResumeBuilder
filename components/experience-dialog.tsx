@@ -76,11 +76,11 @@ const JobExperienceForm = ({ onSubmit, initialValues, questions }) => {
 const ExperienceDialog= ({ triggerButton, onSubmit, initialValues, questions }) => (
     <Dialog>
         <DialogTrigger asChild>{triggerButton}</DialogTrigger>
-        <DialogContent className="max-w-none w-[calc(100vw-20rem)] h-[calc(100vh-10rem)]">
+        <DialogContent className="max-w-none px-0 md:px-6 w-[calc(100vw-1rem)] h-[calc(100vh-4rem)] md:w-[calc(100vw-20rem)] md:h-[calc(100vh-10rem)]">
             <DialogHeader>
                 <DialogTitle>{initialValues ? 'Edit Job Experience' : 'Add Job Experience'}</DialogTitle>
             </DialogHeader>
-            <ScrollArea className="px-4">
+            <ScrollArea className="px-0 md:px-4">
             <JobExperienceForm onSubmit={onSubmit} initialValues={initialValues} questions={questions}/>
             </ScrollArea>
             
