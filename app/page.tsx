@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useRef } from 'react';
+import { useState, useRef, Suspense } from 'react';
 import { Button } from "@/components/ui/button"
 
 import usePDFEngine from '@/hooks/usePDFEngine';
@@ -23,13 +23,17 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { CommandDialogDemo } from '@/components/command-dialog';
 import { emptyResume, tempResume } from '@/lib/utils';
 
-const PdfTeXPage = () => {
-    // Initialize the router
-    const router = useRouter();
-
+// Separate component for search params functionality
+function SearchParamsComponent() {
     const searchParams = useSearchParams()
     const search = searchParams.get('search')
     console.log(search);
+    return null;
+}
+
+const PdfTeXPage = () => {
+    // Initialize the router
+    const router = useRouter();
 
     const { engine, isEngineReady } = usePDFEngine();
 
@@ -101,6 +105,9 @@ const PdfTeXPage = () => {
 
     return (
         <div className="flex flex-col h-screen px-7">
+            <Suspense>
+                <SearchParamsComponent />
+            </Suspense>
             <div className="w-full flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
                 <h2 className="text-2xl font-semibold leading-none tracking-tight">
                     ResumeCreator

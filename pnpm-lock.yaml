@@ -76,6 +76,9 @@ devDependencies:
   '@types/node':
     specifier: ^20
     version: 20.17.7
+  '@types/prismjs':
+    specifier: ^1.26.5
+    version: 1.26.5
   '@types/react':
     specifier: ^18
     version: 18.3.12
@@ -1284,6 +1287,10 @@ packages:
     resolution: {integrity: sha512-sZXXnpBFMKbao30dUAvzKbdwA2JM1fwUtVEq/kxKuPI5mMwZiRElCpTXb0Biq/LMEVpXDZL5G5V0RPnxKeyaYg==}
     dependencies:
       undici-types: 6.19.8
+    dev: true
+
+  /@types/prismjs@1.26.5:
+    resolution: {integrity: sha512-AUZTa7hQ2KY5L7AmtSiqxlhWxb4ina0yd8hNbl4TWuqnv/pFP0nDMb3YrfSBf4hJVGLh2YEIBfKaBW/9UEl6IQ==}
     dev: true
 
   /@types/prop-types@15.7.13:
