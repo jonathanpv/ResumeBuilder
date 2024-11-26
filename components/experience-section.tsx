@@ -95,21 +95,25 @@ const ExperienceSection = ({
         return resume[sectionKey].every(isExperienceEmpty);
     };
 
-    const addButton = (
-        <ExperienceDialog
-            triggerButton={<Badge variant="secondary">{triggerLabel}</Badge>}
-            onSubmit={handleAddExperience}
-            initialValues={null}
-            questions={questions}
-        />
-    );
     return (
         <>
             {isSectionEmpty() && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="flex flex-col">
+                    <div className="text-center py-8 text-gray-500">
                     <p className="mb-4">No experiences added yet</p>
                     <p className="text-sm">Click "{triggerLabel}" to add your first experience</p>
+                    <Separator className="my-7"/>
+                    <div className="flex w-full justify-end">
+                        <ExperienceDialog
+                            triggerButton={<Button className="">{triggerLabel}</Button>}
+                            onSubmit={handleAddExperience}
+                            initialValues={null}
+                            questions={questions}
+                        />
+                    </div>
                 </div>
+                </div>
+                
             )}
             <div className="space-y-4">
                 {resume[sectionKey]
@@ -139,7 +143,15 @@ const ExperienceSection = ({
                                 {experience.bulletPoint2 && <li>{experience.bulletPoint2}</li>}
                                 {experience.bulletPoint3 && <li>{experience.bulletPoint3}</li>}
                             </ul>
-                            <Separator />
+                            <Separator className="my-9"/>
+                            <div className="flex w-full justify-end">
+                                <ExperienceDialog
+                                    triggerButton={<Button className="">{triggerLabel}</Button>}
+                                    onSubmit={handleAddExperience}
+                                    initialValues={null}
+                                    questions={questions}
+                                />
+                            </div>
                         </div>
                     ))}
             </div>

@@ -13,8 +13,8 @@ import SkillEditDialog from '@/components/skill-edit-dialog';
 import { SortableItem } from './SortableItem';
 
 export function SkillsSection({ resume, setResume, isDragging }) {
-  const allToolsAndFrameworks = ['React', 'Node.js', 'Next.js', 'Vue', 'Angular', 'Django', 'ojw', 'wfoj', 'jfwo'];
-  const allProgrammingLanguages = ['Java', 'C', 'C++', 'Python', 'JavaScript', 'TypeScript'];
+  const allToolsAndFrameworks = ['React', 'Node.js', 'Next.js', 'Vue', 'Angular', 'Django', 'PyTorch', 'TensorFlow', 'Keras', 'H2O', 'Apache Spark', 'Ruby on Rails', 'Laravel', 'Express', 'Expo', 'React Native', 'Framer Motion', 'Tailwind CSS', 'Flask', 'ASP.NET'];
+  const allProgrammingLanguages = ['Java', 'C', 'C++', 'Python', 'JavaScript', 'TypeScript', 'Go', 'Rust', 'Kotlin', 'Scala', 'R', 'MATLAB', 'SQL', 'NoSQL', 'HTML', 'CSS', 'PHP', 'Perl', 'Ruby', 'Groovy', 'Swift', 'Objective-C', 'F#', 'Elixir', 'Erlang', 'Haskell', 'OCaml', 'Racket', 'Prolog', 'Scheme', 'Smalltalk'];
 
   const updateSkills = (category, updatedSkills) => {
     setResume(prevResume => ({

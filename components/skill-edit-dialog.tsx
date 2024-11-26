@@ -32,12 +32,19 @@ const SkillEditDialog = ({ title, skills, allSkills, setSkills, dialogButtonText
                 You can also add new skills that aren't listed here by clicking "{dialogButtonText}"
               </DialogDescription>
             </DialogHeader>
-            <ToggleGroup type="multiple" className="flex flex-wrap justify-start"
+            <ToggleGroup 
+              type="multiple" 
+              className="flex flex-wrap gap-2 justify-start"
               value={skills}
               onValueChange={toggleSkill}
             >
               {allSkills.map(skill => (
-                <ToggleGroupItem key={skill} value={skill}>
+                <ToggleGroupItem 
+                  key={skill} 
+                  value={skill} 
+                  variant="outline"
+                  className="hover:bg-accent/80 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:hover:bg-primary/90"
+                >
                   {skill}
                 </ToggleGroupItem>
               ))}

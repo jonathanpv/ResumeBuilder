@@ -4,8 +4,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cva } from "class-variance-authority";
-import { GripVertical } from "lucide-react";
+import { GripVertical, ChevronDown } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export interface SortableItemProps {
   id: UniqueIdentifier;
@@ -14,6 +16,8 @@ export interface SortableItemProps {
   children: React.ReactNode;
   badgeLabel?: string;
   rightElement?: React.ReactNode;
+  isDraggingAny?: boolean;
+  defaultExpanded?: boolean;
 }
 
 export function SortableItem({ 
@@ -22,8 +26,12 @@ export function SortableItem({
   description, 
   children, 
   badgeLabel = "Section",
-  rightElement 
+  rightElement,
+  isDraggingAny = false,
+  defaultExpanded = false
 }: SortableItemProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
   const {
     setNodeRef,
     attributes,
@@ -65,8 +73,19 @@ export function SortableItem({
           <span className="sr-only">Move section</span>
           <GripVertical />
         </Button>
-        <div className="flex-1 ml-2">
-          <CardTitle>{title}</CardTitle>
+        <div 
+          className="flex-1 ml-2 cursor-pointer select-none" 
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="flex items-center">
+            <CardTitle>{title}</CardTitle>
+            <ChevronDown 
+              className={cn(
+                "ml-2 h-4 w-4 transition-transform duration-200",
+                isExpanded ? "transform rotate-0" : "transform rotate-180"
+              )} 
+            />
+          </div>
           {description && <CardDescription>{description}</CardDescription>}
         </div>
         {rightElement && <div className="ml-auto">{rightElement}</div>}
@@ -74,9 +93,21 @@ export function SortableItem({
           {badgeLabel}
         </Badge>
       </CardHeader>
-      <CardContent className={isDragging ? "hidden" :"px-3 pt-3 pb-6"}>
-        {children}
-      </CardContent>
+      <div 
+        className={cn(
+          "transition-all duration-200 ease-in-out",
+          isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+        )}
+      >
+        <CardContent 
+          className={cn(
+            "px-3 pt-3 pb-6",
+            isDragging || isDraggingAny ? "hidden" : "",
+          )}
+        >
+          {children}
+        </CardContent>
+      </div>
     </Card>
   );
 } 

@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -24,6 +24,8 @@ import ExperienceSection from './experience-section';
 import EducationSection from './education-section';
 
 export function ResumeBuilder({resume, setResume, resumeFeedback}) {
+  const [isDraggingAny, setIsDraggingAny] = useState(false);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -32,7 +34,12 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
     })
   );
 
+  const handleDragStart = () => {
+    setIsDraggingAny(true);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setIsDraggingAny(false);
     const { active, over } = event;
 
     if (active.id !== over?.id) {
@@ -50,6 +57,7 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <SortableContext
@@ -167,6 +175,8 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
                     id={sectionId} 
                     title={sectionTitle}
                     badgeLabel={badgeLabel}
+                    isDraggingAny={isDraggingAny}
+                    defaultExpanded={false}
                   >
                     {sectionContent}
                   </SortableItem>
