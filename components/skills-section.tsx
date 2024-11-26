@@ -28,33 +28,36 @@ export function SkillsSection({ resume, setResume }) {
     }));
   };
 
-
-
   return (
-    <Card className="mt-6">
-      <CardHeader className="p-4">
-        <CardTitle>Skills</CardTitle>
-      </CardHeader>
-      <CardContent className="p-4 flex flex-col gap-2">
-        <SkillEditDialog
-          title="Tools and Frameworks"
-          skills={resume?.skills?.toolsAndFrameworks || []}
-          allSkills={allToolsAndFrameworks}
-          setSkills={(updatedSkills) => updateSkills('toolsAndFrameworks', updatedSkills)}
-          dialogButtonText="Add new Tool/Framework"
-        />
+    <div className="sortable-section">
+      <Card className="mt-6">
+        <CardHeader className="p-4">
+          <div className="flex flex-row justify-start items-center">
+            <CardTitle>Skills</CardTitle>
+            {/* Add drag handle if needed */}
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 flex flex-col gap-2">
+          <SkillEditDialog
+            title="Tools and Frameworks"
+            skills={resume?.skills?.toolsAndFrameworks || []}
+            allSkills={allToolsAndFrameworks}
+            setSkills={(updatedSkills) => updateSkills('toolsAndFrameworks', updatedSkills)}
+            dialogButtonText="Add new Tool/Framework"
+          />
 
-        <Separator className="my-4" />
+          <Separator className="my-4" />
 
-        <SkillEditDialog
-          title="Programming Languages"
-          skills={resume?.skills?.programmingLanguages || []}
-          allSkills={allProgrammingLanguages}
-          setSkills={(updatedSkills) => updateSkills('programmingLanguages', updatedSkills)}
-          dialogButtonText="Add New Language"
-        />
+          <SkillEditDialog
+            title="Programming Languages"
+            skills={resume?.skills?.programmingLanguages || []}
+            allSkills={allProgrammingLanguages}
+            setSkills={(updatedSkills) => updateSkills('programmingLanguages', updatedSkills)}
+            dialogButtonText="Add New Language"
+          />
 
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

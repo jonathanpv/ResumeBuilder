@@ -40,7 +40,16 @@ const PdfTeXPage = () => {
     const [pdfUrl, setPdfUrl] = useState('');
     const [isRendering, setIsRendering] = useState(false); // New state for rendering status
 
-    const [resume, setResume] = useState(emptyResume);
+    const [resume, setResume] = useState({
+        ...emptyResume,
+        sectionOrder: [
+            'personalInfo',
+            'skills',
+            'jobExperience',
+            'projectExperience',
+            'education'
+        ],
+    });
 
     const [compileFailed, setCompileFailed] = useState(false);
     const [resumeFeedback, setResumeFeedback] = useState({
@@ -62,7 +71,7 @@ const PdfTeXPage = () => {
         setIsRendering(true);
         setCompileFailed(false);
 
-        const latexResume = jsonToLatexString(resume);
+        const latexResume = jsonToLatexString(resume, resume.sectionOrder || []);
         console.log("resume:\n\n", resume);
         console.log("latexResume:\n\n", latexResume);
         engine.writeMemFSFile('main.tex', latexResume);
@@ -97,7 +106,7 @@ const PdfTeXPage = () => {
 
     // Handles the "View code" button click
     const handleViewCode = () => {
-        const latexCode = jsonToLatexString(resume);
+        const latexCode = jsonToLatexString(resume, resume.sectionOrder || []);
         const base64Code = b64EncodeUnicode(latexCode);
         const encodedCode = encodeURIComponent(base64Code);
         router.push(`/latexeditor?code=${encodedCode}`);
@@ -134,7 +143,11 @@ const PdfTeXPage = () => {
 
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel className="flex flex-col pr-4 pb-4" defaultSize={400}>
-                    <ResumeBuilder resume={resume} setResume={setResume} resumeFeedback={resumeFeedback} />
+                    <ResumeBuilder 
+                        resume={resume} 
+                        setResume={setResume} 
+                        resumeFeedback={resumeFeedback} 
+                    />
                 </ResizablePanel>
 
                 <ResizableHandle withHandle />

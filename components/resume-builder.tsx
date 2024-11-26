@@ -1,7 +1,24 @@
 // @ts-nocheck
 
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragStartEvent,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+
+import { SortableItem } from './SortableItem';
+import { Handle } from './Handle'; // Ensure Handle is imported if used in SortableItem
 
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -13,7 +30,59 @@ import EducationSection from './education-section';
 import { ScrollArea } from './ui/scroll-area';
 
 export function ResumeBuilder({resume, setResume, resumeFeedback}) {
-  // This is the personalInfo stateful variable
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedId, setDraggedId] = useState(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    console.log("::debug logic:: Drag started", {
+      activeId: event.active.id,
+      currentOrder: resume.sectionOrder
+    });
+    setIsDragging(true);
+    setDraggedId(event.active.id);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    console.log("::debug logic:: Drag ended", {
+      activeId: active.id,
+      overId: over?.id,
+      currentOrder: resume.sectionOrder
+    });
+
+    setIsDragging(false);
+    setDraggedId(null);
+
+    if (active.id !== over?.id) {
+      const oldIndex = resume.sectionOrder.indexOf(active.id);
+      const newIndex = resume.sectionOrder.indexOf(over.id);
+      
+      console.log("::debug logic:: Reordering", {
+        oldIndex,
+        newIndex,
+        activeId: active.id,
+        overId: over.id
+      });
+
+      const newOrder = arrayMove(resume.sectionOrder, oldIndex, newIndex);
+      console.log("::debug logic:: New order", newOrder);
+
+      setResume(prevResume => ({
+        ...prevResume,
+        sectionOrder: newOrder,
+      }));
+    }
+  };
+
+  // Handler functions remain the same
   const handleInputChange = (section, field, value) => {
     setResume(prevResume => ({
       ...prevResume,
@@ -24,7 +93,6 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
     }));
   };
 
-  // Handler for changes in arrays like jobExperience and projectExperience
   const handleArrayChange = (section, value) => {
     setResume(prevResume => ({
       ...prevResume,
@@ -32,7 +100,6 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
     }));
   };
 
-  // Handler for skills change, assuming it might have a different structure or requires special handling
   const handleSkillsChange = (value) => {
     setResume(prevResume => ({
       ...prevResume,
@@ -40,189 +107,147 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
     }));
   };
 
-  
-//   const [personalInfo, setPersonalInfo] = useState({
-//     name: '',
-//     email: '',
-//     linkedin: '',
-//     github: ''
-//   });
-
-
-//   // This is the jobExperience stateful variable
-//   const [jobExperience, setJobExperience] = useState([]);
-  
-//   // This is the projectExperience stateful variable
-//   const [projectExperience, setProjectExperience] = useState([]);
-
-//   // This is the stateful skills list variable
-//   const [skills, setSkills] = useState({
-//     toolsAndFrameworks: ['React', 'Node.js', 'Next.js'],
-//     programmingLanguages: ['Java', 'C', 'C++', 'Python']
-//   });
-
-//   const [education, setEducation] = useState({
-//     institutionName: '',
-//     degreeDetails: '',
-//     timePeriod: ''
-//   });
-
-//   const [isLoadingResume, setIsLoadingResume] = useState(false);
-
-//   // Add a new function to load resume data from JSON
-//   const loadResume = (resumeData) => {
-//     setIsLoadingResume(true);
-//     setPersonalInfo(resumeData.personalInfo || {});
-//     setSkills(resumeData.skills || {});
-    
-//     setJobExperience(resumeData.jobExperience || []);
-//     setProjectExperience(resumeData.projectExperience || []);
-//     setEducation(resumeData.education || []);
-
-//   };
-
-//   // Call the loadResume function with the JSON object you want to load
-//   // You can replace this with the JSON object read from the URL params
-//   useEffect(() => {
-    
-//     let ignore = false;
-
-//     return () => {
-//       ignore = true;
-//     };
-//   }, []);
-
-
-//   React.useEffect(() => {
-//     // Logic to execute when resume changes
-//     console.log('Resume has changed:', resume);
-//     // For instance, you could check if the resume state is not empty
-//     // and then perform some action based on that
-//     if (Object.keys(resume).length > 0) {
-//         // Perform some action when resume is set
-//         console.log('Resume is set, performing some action...');
-//         // This could be updating the UI, making an API call, etc.
-//     } else {
-//         // Handle the case where resume is empty
-//         console.log('Resume is not set or cleared.');
-//     }
-//     loadResume(resume);
-// }, [resume]); // This effect depends on the `resume` state
-
-
-//   const handlePersonalInfoChange = (field, value) => {
-//     setPersonalInfo({ ...personalInfo, [field]: value });
-//   };
-
-//   const handleJobExperienceChange = (experienceData) => {
-//     setJobExperience(experienceData);
-//   };
-  
-//   const handleProjectExperienceChange = (experienceData) => {
-//     setProjectExperience(experienceData);
-//   };
-  
-//   const handleEducationChange = (educationData) => {
-//     setEducation(educationData);
-//   };
- 
   return (
-    <ScrollArea>
-    <div className="flex flex-col md:flex-row h-screen">
-      <main className="lg:flex-1 lg:p-4">
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={resume.sectionOrder}
+        strategy={verticalListSortingStrategy}
+      >
+        <ScrollArea>
+          <div className="flex flex-col md:flex-row h-screen">
+            <main className="lg:flex-1 lg:p-4">
+              {resume.sectionOrder.map((sectionId) => {
+                const isBeingDragged = isDragging && draggedId === sectionId;
+                
+                return (
+                  <div key={sectionId} className={`mb-4 transition-all duration-200 ${isBeingDragged ? 'opacity-50' : ''}`}>
+                    {sectionId === 'personalInfo' && (
+                      <SortableItem id={sectionId}>
+                        <Card className={isDragging ? 'py-2' : ''}>
+                          <CardHeader className="p-4">
+                            <CardTitle>Personal Information</CardTitle>
+                          </CardHeader>
+                          {!isDragging && (
+                            <CardContent className="p-4 space-y-4">
+                              {/* Personal Information Fields */}
+                              <div className="grid gap-1.5">
+                                <Label htmlFor="name">Name</Label>
+                                <Input
+                                  id="name"
+                                  value={resume?.personalInfo?.name || ''}
+                                  placeholder="Your name"
+                                  onChange={(e) => handleInputChange('personalInfo', 'name', e.target.value)}
+                                />
+                              </div>
+                              <div className="grid gap-1.5">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                  id="email"
+                                  value={resume?.personalInfo?.email || ''}
+                                  placeholder="Your email"
+                                  onChange={(e) => handleInputChange('personalInfo', 'email', e.target.value)}
+                                />
+                              </div>
+                              <div className="grid gap-1.5">
+                                <Label htmlFor="linkedin">LinkedIn</Label>
+                                <Input
+                                  id="linkedin"
+                                  value={resume?.personalInfo?.linkedin || ''}
+                                  placeholder="Your LinkedIn profile url"
+                                  onChange={(e) => handleInputChange('personalInfo', 'linkedin', e.target.value)}
+                                />
+                              </div>
+                              <div className="grid gap-1.5">
+                                <Label htmlFor="github">GitHub</Label>
+                                <Input
+                                  id="github"
+                                  value={resume?.personalInfo?.github || ''}
+                                  placeholder="Your GitHub profile url"
+                                  onChange={(e) => handleInputChange('personalInfo', 'github', e.target.value)}
+                                />
+                              </div>
+                            </CardContent>
+                          )}
+                        </Card>
+                      </SortableItem>
+                    )}
 
-        <Card>
-          <CardHeader className="p-4">
-            <CardTitle>Personal Information</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 space-y-4">
-            {/* Explicitly handling each field */}
-            <div className="grid gap-1.5">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                value={resume?.personalInfo?.name || ''}
-                placeholder="Your name"
-                onChange={(e) => handleInputChange('personalInfo', 'name', e.target.value)}
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                value={resume?.personalInfo?.email || ''}
-                placeholder="Your email"
-                onChange={(e) => handleInputChange('personalInfo', 'email', e.target.value)}
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="linkedin">LinkedIn</Label>
-              <Input
-                id="linkedin"
-                value={resume?.personalInfo?.linkedin || ''}
-                placeholder="Your LinkedIn profile url"
-                onChange={(e) => handleInputChange('personalInfo', 'linkedin', e.target.value)}
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="github">GitHub</Label>
-              <Input
-                id="github"
-                value={resume?.personalInfo?.github || ''}
-                placeholder="Your GitHub profile url"
-                onChange={(e) => handleInputChange('personalInfo', 'github', e.target.value)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-        <SkillsSection resume={resume} setResume={setResume}></SkillsSection>
-        <ExperienceSection 
-          description={"The experience section is where you showcase the skills you claim to have up top. If you don't have a job history then you can leave this blank and populate your resume with the projects section."}
-          questions={[
-            { name: 'title', inputMode: 'text', label: 'Job Title', placeholder: 'Software Engineer Intern' },
-            { name: 'dates', inputMode: 'text', label: 'Start - End Date', placeholder: 'May 2021 - August 2021' },
-            { name: 'companyName', inputMode: 'text', label: 'Company Name', placeholder: 'Microdaddy' },
-            { name: 'bulletPoint1', inputMode: 'textarea', label: 'Bullet Point 1', placeholder: 'Coded a lil this and a lil that' },
-            { name: 'bulletPoint2', inputMode: 'textarea', label: 'Bullet Point 2', placeholder: 'Litra-lly met Satya' },
-            { name: 'bulletPoint3', inputMode: 'textarea', label: 'Bullet Point 3', placeholder: 'Developed and designed revolutionary new AI Copilot named Clippy-Pro-Max-Ultra, so good it put me out of a joberino pepperino :o' },
-          ]}
-          resume={resume}
-          setResume={setResume}
-          sectionKey="jobExperience"
-  
-        />
+                    {sectionId === 'skills' && (
+                      <SortableItem id={sectionId}>
+                        <div className={isDragging ? 'collapsed-section' : ''}>
+                          <SkillsSection resume={resume} setResume={setResume} />
+                        </div>
+                      </SortableItem>
+                    )}
 
-        <ExperienceSection 
-          title="Projects"
-          triggerLabel="Add New Project"
-          description={"Don't have any Job experience? No worries, fill this out and add any hackathon projects, difficult school assignments, tutorials you followed and build out your resume that way :)"}
-          questions={[
-            { name: 'title', inputMode: 'text', label: 'Role', placeholder: 'Software Engineer' },
-            { name: 'dates', inputMode: 'text', label: 'Start - End Date', placeholder: 'May 2021 - August 2021' },
-            { name: 'companyName', inputMode: 'text', label: 'Project Title', placeholder: 'ResumeGPT' },
-            { name: 'bulletPoint1', inputMode: 'textarea', label: 'Bullet Point 1', placeholder: 'Developed some supa dupa cool ting' },
-            { name: 'bulletPoint2', inputMode: 'textarea', label: 'Bullet Point 2', placeholder: 'Much wow, me likey'},
-            { name: 'bulletPoint3', inputMode: 'textarea', label: 'Bullet Point 3', placeholder: 'Hi mom' },
-          ]}  
-          resume={resume}
-          setResume={setResume}
-          sectionKey="projectExperience"
-        />
+                    {sectionId === 'jobExperience' && (
+                      <SortableItem id={sectionId}>
+                        <div className={isDragging ? 'collapsed-section' : ''}>
+                          <ExperienceSection 
+                            description={!isDragging ? "The experience section is where you showcase the skills you claim to have up top. If you don't have a job history then you can leave this blank and populate your resume with the projects section." : ""}
+                            questions={[
+                              { name: 'title', inputMode: 'text', label: 'Job Title', placeholder: 'Software Engineer Intern' },
+                              { name: 'dates', inputMode: 'text', label: 'Start - End Date', placeholder: 'May 2021 - August 2021' },
+                              { name: 'companyName', inputMode: 'text', label: 'Company Name', placeholder: 'Microdaddy' },
+                              { name: 'bulletPoint1', inputMode: 'textarea', label: 'Bullet Point 1', placeholder: 'Coded a lil this and a lil that' },
+                              { name: 'bulletPoint2', inputMode: 'textarea', label: 'Bullet Point 2', placeholder: 'Litra-lly met Satya' },
+                              { name: 'bulletPoint3', inputMode: 'textarea', label: 'Bullet Point 3', placeholder: 'Developed and designed revolutionary new AI Copilot named Clippy-Pro-Max-Ultra, so good it put me out of a joberino pepperino :o' },
+                            ]}
+                            resume={resume}
+                            setResume={setResume}
+                            sectionKey="jobExperience"
+                          />
+                        </div>
+                      </SortableItem>
+                    )}
 
-        <EducationSection 
-          education={resume?.education} 
-          setResume={setResume} 
-        />
-        {/* <Button className="mt-6" onClick={getResume}>Get Resume</Button>
+                    {sectionId === 'projectExperience' && (
+                      <SortableItem id={sectionId}>
+                        <div className={isDragging ? 'collapsed-section' : ''}>
+                          <ExperienceSection 
+                            title="Projects"
+                            triggerLabel="Add New Project"
+                            description={!isDragging ? "Don't have any Job experience? No worries, fill this out and add any hackathon projects, difficult school assignments, tutorials you followed and build out your resume that way :)" : ""}
+                            questions={[
+                              { name: 'title', inputMode: 'text', label: 'Role', placeholder: 'Software Engineer' },
+                              { name: 'dates', inputMode: 'text', label: 'Start - End Date', placeholder: 'May 2021 - August 2021' },
+                              { name: 'companyName', inputMode: 'text', label: 'Project Title', placeholder: 'ResumeGPT' },
+                              { name: 'bulletPoint1', inputMode: 'textarea', label: 'Bullet Point 1', placeholder: 'Developed some supa dupa cool ting' },
+                              { name: 'bulletPoint2', inputMode: 'textarea', label: 'Bullet Point 2', placeholder: 'Much wow, me likey'},
+                              { name: 'bulletPoint3', inputMode: 'textarea', label: 'Bullet Point 3', placeholder: 'Hi mom' },
+                            ]}  
+                            resume={resume}
+                            setResume={setResume}
+                            sectionKey="projectExperience"
+                          />
+                        </div>
+                      </SortableItem>
+                    )}
 
-        <Button className="mt-6">Save as JSON</Button> */}
-      </main>
-      {/* <aside className="lg:flex-1">
-        <Card className="h-[calc(100vh-2rem)] m-4 border rounded-lg">
-          
-        </Card>
-      </aside> */}
-    </div>
-    </ScrollArea>
+                    {sectionId === 'education' && (
+                      <SortableItem id={sectionId}>
+                        <div className={isDragging ? 'collapsed-section' : ''}>
+                          <EducationSection 
+                            education={resume?.education} 
+                            setResume={setResume} 
+                          />
+                        </div>
+                      </SortableItem>
+                    )}
+                  </div>
+                );
+              })}
+            </main>
+          </div>
+        </ScrollArea>
+      </SortableContext>
+    </DndContext>
   )
 }
+
+export default ResumeBuilder;

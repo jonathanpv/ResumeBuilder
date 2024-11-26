@@ -109,5 +109,12 @@ export const emptyResume = {
     "institutionName": "",
     "degreeDetails": "",
     "timePeriod": ""
-  }
+  },
+  "sectionOrder": [
+    'personalInfo',
+    'skills',
+    'jobExperience',
+    'projectExperience',
+    'education'
+  ]
 };

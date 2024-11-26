@@ -314,16 +314,24 @@ function createLatexStringEducationSection(sectionTitle: string, education: any)
 
 // Given the above example, generate a function that takes in the experience key and outputs a LaTeX string like the one above
 
-export const jsonToLatexString = (resumeJSON: any) => {
+export const jsonToLatexString = (resumeJSON: any, sectionOrder: string[]) => {
   
+  const sectionGenerators: { [key: string]: () => string } = {
+    personalInfo: () => createLatexStringHeader(resumeJSON.personalInfo),
+    skills: () => createLatexStringSkillsSection(resumeJSON.skills),
+    jobExperience: () => createLatexStringExperienceSection("Experience", resumeJSON.jobExperience),
+    projectExperience: () => createLatexStringExperienceSection("Projects", resumeJSON.projectExperience),
+    education: () => createLatexStringEducationSection("Education", resumeJSON.education),
+  };
+
+  const sectionsLaTeX = sectionOrder.map(sectionKey => {
+    const generator = sectionGenerators[sectionKey];
+    return generator ? generator() : '';
+  }).filter(section => section.trim().length > 0).join('\n');
+
   return [
     preamble, 
-    createLatexStringHeader(resumeJSON.personalInfo),
-    createLatexStringSkillsSection(resumeJSON.skills),
-    createLatexStringExperienceSection("Experience", resumeJSON.jobExperience),
-    createLatexStringExperienceSection("Projects", resumeJSON.projectExperience),
-    createLatexStringEducationSection("Education", resumeJSON.education),
-
+    sectionsLaTeX,
     `\\end{document}`
   ].join('\n');
 
