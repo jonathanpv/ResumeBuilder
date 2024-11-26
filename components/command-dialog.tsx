@@ -56,19 +56,7 @@ export function CommandDialogDemo({setResume, printResume}) {
           <CommandGroup heading="Debug Commands">
             
             
-            <CommandItem onSelect={() => {
-              setResume({
-                ...tempResume,
-                sectionOrder: [
-                  "personalInfo",
-                  "skills",
-                  "jobExperience",
-                  "projectExperience",
-                  "education"
-                ]
-              });
-              setOpen((open) => !open);
-            }}>
+            <CommandItem onSelect={() => {setResume(tempResume); setOpen((open) => !open)}}>
               <Binary className="mr-2 h-4 w-4" />
               <span>Set Demo Resume</span>
             </CommandItem>
