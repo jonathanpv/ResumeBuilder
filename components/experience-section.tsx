@@ -32,6 +32,7 @@ type ExperienceSectionProps = {
     resume: any;
     setResume: any;
     sectionKey: string;
+    isDragging: boolean;
     experiences?: JobExperience[];
 };
 
@@ -42,7 +43,8 @@ const ExperienceSection = ({
     questions,
     resume,
     setResume,
-    sectionKey
+    sectionKey,
+    isDragging
 }: ExperienceSectionProps) => {
     const [editingExperience, setEditingExperience] = useState(null);
 
@@ -112,7 +114,7 @@ const ExperienceSection = ({
                 </div>
                 <CardDescription>{description}</CardDescription>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className={isDragging ? 'hidden' : 'p-4'}>
                 <div className="text-center py-8 text-gray-500">
                     <p className="mb-4">No experiences added yet</p>
                     <p className="text-sm">Click "{triggerLabel}" to add your first experience</p>
@@ -140,7 +142,7 @@ const ExperienceSection = ({
                 <CardDescription>{description}</CardDescription>
             </CardHeader>
             
-            <CardContent className="p-4 flex flex-col gap-2">
+            <CardContent className={isDragging ? 'hidden' : 'p-4 flex flex-col gap-2'}>
                 {resume[sectionKey]
                     .filter(experience => !isExperienceEmpty(experience))
                     .map((experience) => (

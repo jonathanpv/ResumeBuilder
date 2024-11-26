@@ -117,7 +117,12 @@ const PdfTeXPage = () => {
             <Suspense>
                 <SearchParamsComponent />
             </Suspense>
-            <div className="w-full flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+            {/* only visible in small screens */}
+            <div className="w-full h-full md:hidden">
+                <h2 className="text-2xl font-semibold leading-none tracking-tight">ResumeCreator</h2>
+                <p className="text-sm text-muted-foreground">ResumeCreator only works on desktop, due to the WASM LaTex engine. Sorry!</p>
+            </div>
+            <div className="hidden md:w-full md:flex md:flex-row md:justify-between md:space-y-2 md:py-4 md:items-center">
                 <h2 className="text-2xl font-semibold leading-none tracking-tight">
                     ResumeCreator
                 </h2>
@@ -139,10 +144,10 @@ const PdfTeXPage = () => {
                     </Button>
                 </div>
             </div>
-            <Separator />
+            <Separator className="hidden md:contents"/>
 
-            <ResizablePanelGroup direction="horizontal">
-                <ResizablePanel className="flex flex-col pr-4 pb-4" defaultSize={400}>
+            <ResizablePanelGroup direction="horizontal" className="hidden md:flex">
+                <ResizablePanel className="hidden md:flex md:flex-col md:pr-4 md:pb-4" defaultSize={400}>
                     <ResumeBuilder 
                         resume={resume} 
                         setResume={setResume} 
@@ -150,9 +155,9 @@ const PdfTeXPage = () => {
                     />
                 </ResizablePanel>
 
-                <ResizableHandle withHandle />
+                <ResizableHandle withHandle className="hidden md:flex" />
 
-                <ResizablePanel className="flex flex-col" defaultSize={400}>
+                <ResizablePanel className="hidden md:flex md:flex-col" defaultSize={400}>
                     {isRendering ? (
                         <div className='bg-background h-full p-4'>
                             <div className="space-y-3 h-full">

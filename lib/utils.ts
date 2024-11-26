@@ -59,7 +59,14 @@ export const tempResume = {
     "institutionName": "University of Texas at Arlington",
     "degreeDetails": "Software Engineering, Bachelor of Science",
     "timePeriod": "2017 - 2022"
-  }
+  },
+  "sectionOrder": [
+    "personalInfo",
+    "skills",
+    "jobExperience",
+    "projectExperience",
+    "education"
+  ]
 };
 
 

@@ -179,15 +179,12 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
 
                     {sectionId === 'skills' && (
                       <SortableItem id={sectionId}>
-                        <div className={isDragging ? 'collapsed-section' : ''}>
-                          <SkillsSection resume={resume} setResume={setResume} />
-                        </div>
+                          <SkillsSection resume={resume} setResume={setResume} isDragging={isDragging} />
                       </SortableItem>
                     )}
 
                     {sectionId === 'jobExperience' && (
                       <SortableItem id={sectionId}>
-                        <div className={isDragging ? 'collapsed-section' : ''}>
                           <ExperienceSection 
                             description={!isDragging ? "The experience section is where you showcase the skills you claim to have up top. If you don't have a job history then you can leave this blank and populate your resume with the projects section." : ""}
                             questions={[
@@ -201,14 +198,13 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
                             resume={resume}
                             setResume={setResume}
                             sectionKey="jobExperience"
+                            isDragging={isDragging}
                           />
-                        </div>
                       </SortableItem>
                     )}
 
                     {sectionId === 'projectExperience' && (
                       <SortableItem id={sectionId}>
-                        <div className={isDragging ? 'collapsed-section' : ''}>
                           <ExperienceSection 
                             title="Projects"
                             triggerLabel="Add New Project"
@@ -224,19 +220,18 @@ export function ResumeBuilder({resume, setResume, resumeFeedback}) {
                             resume={resume}
                             setResume={setResume}
                             sectionKey="projectExperience"
+                            isDragging={isDragging}
                           />
-                        </div>
                       </SortableItem>
                     )}
 
                     {sectionId === 'education' && (
                       <SortableItem id={sectionId}>
-                        <div className={isDragging ? 'collapsed-section' : ''}>
                           <EducationSection 
                             education={resume?.education} 
                             setResume={setResume} 
+                            isDragging={isDragging}
                           />
-                        </div>
                       </SortableItem>
                     )}
                   </div>

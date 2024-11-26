@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import SkillEditDialog from '@/components/skill-edit-dialog';
 
-export function SkillsSection({ resume, setResume }) {
+export function SkillsSection({ resume, setResume, isDragging }) {
   // const [toolsAndFrameworks, setToolsAndFrameworks] = useState(['React', 'Node.js', 'Next.js']);
   // const [programmingLanguages, setProgrammingLanguages] = useState(['Java', 'C', 'C++', 'Python']);
 
@@ -37,7 +37,7 @@ export function SkillsSection({ resume, setResume }) {
             {/* Add drag handle if needed */}
           </div>
         </CardHeader>
-        <CardContent className="p-4 flex flex-col gap-2">
+        <CardContent className={isDragging ? 'hidden' : 'p-4 flex flex-col gap-2'}>
           <SkillEditDialog
             title="Tools and Frameworks"
             skills={resume?.skills?.toolsAndFrameworks || []}

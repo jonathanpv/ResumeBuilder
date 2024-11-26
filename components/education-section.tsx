@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const EducationSection = ({ education, setResume }) => {
+const EducationSection = ({ education, setResume, isDragging }) => {
   // Initialize education section if it doesn't exist
   useEffect(() => {
     if (!education) {
@@ -43,7 +43,7 @@ const EducationSection = ({ education, setResume }) => {
             quickly list academic orgs you're a part of.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4 space-y-4">
+        <CardContent className={isDragging ? 'hidden' : 'p-4 space-y-4'}>
           <div className="grid gap-1.5">
             <Label>Institution Name</Label>
             <Input
@@ -81,7 +81,7 @@ const EducationSection = ({ education, setResume }) => {
           quickly list academic orgs you're a part of.
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-4 space-y-4">
+      <CardContent className={isDragging ? 'hidden' : 'p-4 space-y-4'}>
         <div className="grid gap-1.5">
           <Label>Institution Name</Label>
           <Input
