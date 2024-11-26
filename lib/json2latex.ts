@@ -195,7 +195,7 @@ function createLatexStringHeader(personalInfo: any) {
 
   let header = `
   \\begin{center}
-  \\textbf{\\huge \\scshape ${sanitizeLatexString(name)}} \\\\
+  \\textbf{\\huge \\scshape ${sanitizeLatexString(name.toUpperCase())}} \\\\
   \\small \\href{mailto:${sanitizeLatexString(email)}}{\\underline{${sanitizeLatexString(email)}}}`;
   
   if (github && github.length > 0) {
