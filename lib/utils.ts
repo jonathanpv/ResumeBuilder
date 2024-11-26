@@ -112,11 +112,7 @@ export const emptyResume = {
       "id": 3
     }
   ],
-  "education": {
-    "institutionName": "",
-    "degreeDetails": "",
-    "timePeriod": ""
-  },
+  "education": null,
   "sectionOrder": [
     'personalInfo',
     'skills',

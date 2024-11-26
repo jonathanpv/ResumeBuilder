@@ -2,11 +2,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { CardTitle, CardHeader, CardContent, CardDescription, Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import ExperienceDialog from './experience-dialog';
 import { Separator } from "@/components/ui/separator";
+import { SortableItem } from './SortableItem';
 
 interface JobExperience {
     id: number;
@@ -48,7 +48,6 @@ const ExperienceSection = ({
 }: ExperienceSectionProps) => {
     const [editingExperience, setEditingExperience] = useState(null);
 
-    // Initialize the section if it doesn't exist
     useEffect(() => {
         if (!resume[sectionKey]) {
             setResume(prevResume => ({
@@ -83,96 +82,68 @@ const ExperienceSection = ({
         }));
     };
 
-    // Helper function to check if an experience is empty
     const isExperienceEmpty = (experience: JobExperience) => {
         return !experience.title && !experience.companyName && 
                !experience.bulletPoint1 && !experience.bulletPoint2 && 
                !experience.bulletPoint3 && !experience.dates;
     };
 
-    // Helper function to check if the section is effectively empty
     const isSectionEmpty = () => {
         if (!resume[sectionKey]) return true;
         if (!Array.isArray(resume[sectionKey])) return true;
         if (resume[sectionKey].length === 0) return true;
-        
-        // Check if all experiences are empty objects or contain only empty strings
         return resume[sectionKey].every(isExperienceEmpty);
     };
 
-    const EmptyState = () => (
-        <Card className="mt-6">
-            <CardHeader className="p-4">
-                <div className="flex flex-row justify-start items-center">
-                    <CardTitle className="flex-grow">{title}</CardTitle>
-                    <ExperienceDialog
-                        triggerButton={<Badge className="!mt-0 flex justify-center cursor-pointer" variant="secondary">{triggerLabel}</Badge>}
-                        onSubmit={handleAddExperience}
-                        initialValues={null}
-                        questions={questions}
-                    />
-                </div>
-                <CardDescription>{description}</CardDescription>
-            </CardHeader>
-            <CardContent className={isDragging ? 'hidden' : 'p-4'}>
+    const addButton = (
+        <ExperienceDialog
+            triggerButton={<Badge variant="secondary">{triggerLabel}</Badge>}
+            onSubmit={handleAddExperience}
+            initialValues={null}
+            questions={questions}
+        />
+    );
+    return (
+        <>
+            {isSectionEmpty() && (
                 <div className="text-center py-8 text-gray-500">
                     <p className="mb-4">No experiences added yet</p>
                     <p className="text-sm">Click "{triggerLabel}" to add your first experience</p>
                 </div>
-            </CardContent>
-        </Card>
-    );
-
-    if (isSectionEmpty()) {
-        return <EmptyState />;
-    }
-
-    return (
-        <Card className="mt-6">
-            <CardHeader className="p-4">
-                <div className="flex flex-row justify-start items-center">
-                    <CardTitle className="flex-grow">{title}</CardTitle>
-                    <ExperienceDialog
-                        triggerButton={<Badge className="!mt-0 flex justify-center cursor-pointer" variant="secondary">{triggerLabel}</Badge>}
-                        onSubmit={handleAddExperience}
-                        initialValues={null}
-                        questions={questions}
-                    />
-                </div>
-                <CardDescription>{description}</CardDescription>
-            </CardHeader>
-            
-            <CardContent className={isDragging ? 'hidden' : 'p-4 flex flex-col gap-2'}>
+            )}
+            <div className="space-y-4">
                 {resume[sectionKey]
                     .filter(experience => !isExperienceEmpty(experience))
                     .map((experience) => (
-                        <div key={experience.id}>
-                            <div className="flex flex-row justify-between w-full">
-                                <h3 className="text-xl font-semibold">{experience.title}</h3>
-                                <p className="text-gray-700">{experience.dates}</p>
+                        <div key={experience.id} className="space-y-2">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-xl font-semibold">{experience.title}</h3>
+                                    <p className="text-gray-700">{experience.companyName}</p>
+                                    <p className="text-gray-500">{experience.dates}</p>
+                                </div>
+                                <div className="flex space-x-2">
+                                    <ExperienceDialog
+                                        triggerButton={<Button>Edit</Button>}
+                                        onSubmit={handleEditExperience}
+                                        initialValues={experience}
+                                        questions={questions}
+                                    />
+                                    <Button variant="secondary" onClick={() => handleDeleteExperience(experience.id)}>
+                                        Delete
+                                    </Button>
+                                </div>
                             </div>
-                            
-                            <p className="text-gray-700">{experience.companyName}</p>
                             <ul className="list-disc pl-5">
                                 {experience.bulletPoint1 && <li>{experience.bulletPoint1}</li>}
                                 {experience.bulletPoint2 && <li>{experience.bulletPoint2}</li>}
                                 {experience.bulletPoint3 && <li>{experience.bulletPoint3}</li>}
                             </ul>
-                            <div className="mt-4 flex justify-start space-x-2">
-                                <ExperienceDialog
-                                    triggerButton={<Button onClick={() => setEditingExperience(experience)}>Edit</Button>}
-                                    onSubmit={handleEditExperience}
-                                    initialValues={editingExperience}
-                                    questions={questions}
-                                />
-                                <Button variant="secondary" onClick={() => handleDeleteExperience(experience.id)}>Delete</Button>
-                            </div>
-                            <Separator className="my-4" />
+                            <Separator />
                         </div>
                     ))}
-            </CardContent>
-        </Card>
-    );
-};
+            </div>
+        </>
+    );}
 
 export default ExperienceSection;

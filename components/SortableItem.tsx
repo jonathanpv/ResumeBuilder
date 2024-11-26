@@ -1,51 +1,82 @@
-import React from 'react';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Handle } from './Handle';
+import type { UniqueIdentifier } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cva } from "class-variance-authority";
+import { GripVertical } from "lucide-react";
+import { Badge } from "./ui/badge";
 
-interface SortableItemProps {
-  id: string;
+export interface SortableItemProps {
+  id: UniqueIdentifier;
+  title: string;
+  description?: string;
   children: React.ReactNode;
+  badgeLabel?: string;
+  rightElement?: React.ReactNode;
 }
 
-export const SortableItem: React.FC<SortableItemProps> = ({ id, children }) => {
+export function SortableItem({ 
+  id, 
+  title, 
+  description, 
+  children, 
+  badgeLabel = "Section",
+  rightElement 
+}: SortableItemProps) {
   const {
+    setNodeRef,
     attributes,
     listeners,
-    setNodeRef,
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({id});
 
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
+  const style = {
     transition,
-    position: 'relative',
-    zIndex: isDragging ? 1 : 0,
-    opacity: isDragging ? 0.8 : 1,
-    marginBottom: '16px',
-    borderRadius: '8px',
+    transform: CSS.Translate.toString(transform),
   };
 
-  console.log("::debug logic:: SortableItem render", {
-    id,
-    isDragging,
-    hasTransform: !!transform,
+  const variants = cva("", {
+    variants: {
+      dragging: {
+        over: "ring-2 opacity-30",
+        overlay: "ring-2 ring-primary",
+      },
+    },
   });
 
   return (
-    <div ref={setNodeRef} style={style}>
-      <div 
-        className="drag-handle absolute left-0 top-0 h-full px-2 flex items-center cursor-grab active:cursor-grabbing"
-        {...attributes} 
-        {...listeners}
-      >
-        <Handle />
-      </div>
-      <div className="pl-8">
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={variants({
+        dragging: isDragging ? "over" : undefined,
+      })}
+    >
+      <CardHeader className="px-3 py-3 flex flex-row items-center border-b-2 border-secondary">
+        <Button
+          variant={"ghost"}
+          {...attributes}
+          {...listeners}
+          className="p-1 text-secondary-foreground/50 cursor-grab"
+        >
+          <span className="sr-only">Move section</span>
+          <GripVertical />
+        </Button>
+        <div className="flex-1 ml-2">
+          <CardTitle>{title}</CardTitle>
+          {description && <CardDescription>{description}</CardDescription>}
+        </div>
+        {rightElement && <div className="ml-auto">{rightElement}</div>}
+        <Badge variant={"outline"} className="ml-2 font-semibold">
+          {badgeLabel}
+        </Badge>
+      </CardHeader>
+      <CardContent className={isDragging ? "hidden" :"px-3 pt-3 pb-6"}>
         {children}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
-}; 
+} 
