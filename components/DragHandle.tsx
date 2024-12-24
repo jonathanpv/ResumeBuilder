@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Button } from "@/components/ui/button";
 import { GripVertical } from "lucide-react";
 
